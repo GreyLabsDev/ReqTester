@@ -29,13 +29,6 @@ func webServer(controlChannel chan int) {
 
 func getTokenHandler(w http.ResponseWriter, r *http.Request) {
 	lastTokenData = extractRequestParams(r)
-	// body, err := r.GetBody()
-	// if err == nil {
-	// 	bodyString, readError := ioutil.ReadAll(body)
-	// 	if readError == nil {
-	// 		lastTokenData += "\nBody:\n" + string(bodyString)
-	// 	}
-	// }
 	body, err := ioutil.ReadAll(r.Body)
     if err != nil {
         log.Printf("Error reading body: %v", err)
