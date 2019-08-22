@@ -42,7 +42,7 @@ func getTokenHandler(w http.ResponseWriter, r *http.Request) {
         http.Error(w, "can't read body", http.StatusBadRequest)
         return
 	}
-	lastTokenData += "\nBody:\n" + string(body)
+	lastTokenData += "\n\nBody:\n" + string(body)
 	fmt.Fprintln(w, "\nOk")
 	fmt.Fprintln(w, body)
 }
