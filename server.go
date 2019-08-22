@@ -1,7 +1,7 @@
 package main
 
 import (
-	// "io/ioutil"
+	"io/ioutil"
 	"fmt"
 	"log"
 	"net/http"
@@ -36,7 +36,15 @@ func getTokenHandler(w http.ResponseWriter, r *http.Request) {
 	// 		lastTokenData += "\nBody:\n" + string(bodyString)
 	// 	}
 	// }
+	body, err := ioutil.ReadAll(r.Body)
+    if err != nil {
+        log.Printf("Error reading body: %v", err)
+        http.Error(w, "can't read body", http.StatusBadRequest)
+        return
+	}
+	lastTokenData += "\nBody:\n" + string(body)
 	fmt.Fprintln(w, "\nOk")
+	fmt.Fprintln(w, body)
 }
 
 func recordPostParamsHandler(w http.ResponseWriter, r *http.Request) {
