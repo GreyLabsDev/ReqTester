@@ -1,6 +1,7 @@
 package main
 
 import (
+	"io/ioutil"
 	"fmt"
 	"log"
 	"net/http"
@@ -9,17 +10,31 @@ import (
 
 var mainControlChannel chan int
 var lastReqParams = ""
+var lastTokenData = ""
 
 func webServer(controlChannel chan int) {
 	mainControlChannel = controlChannel
 
 	http.HandleFunc("/last_req_params", lastPostParamsHandler)
 	http.HandleFunc("/save_req_params", recordPostParamsHandler)
+	http.HandleFunc("/api/v1/user/token", getTokenHandler)
+	http.HandleFunc("/last_token_params", lastTokenParamsHandler)
 	http.HandleFunc("/halthalthalt", terminateAppHandler)
-
+	
 	err := http.ListenAndServe(":80", nil)
 	if err != nil {
 		log.Fatal("ListenAndServe: ", err)
+	}
+}
+
+func getTokenHandler(w http.ResponseWriter, r *http.Request) {
+	lastTokenData = extractRequestParams(r)
+	body, err := r.GetBody()
+	if err == nil {
+		bodyString, readError := ioutil.ReadAll(body)
+		if readError == nil {
+			lastTokenData += "\nBody:\n" + string(bodyString)
+		}
 	}
 }
 
@@ -31,6 +46,11 @@ func recordPostParamsHandler(w http.ResponseWriter, r *http.Request) {
 func lastPostParamsHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintln(w, "\nLast request params ")
 	fmt.Fprintln(w, "\n"+lastReqParams)
+}
+
+func lastTokenParamsHandler(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintln(w, "\nLast request params ")
+	fmt.Fprintln(w, "\n"+lastTokenData)
 }
 
 func extractRequestParams(r *http.Request) string {
