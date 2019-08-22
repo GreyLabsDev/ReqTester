@@ -38,6 +38,7 @@ func getTokenHandler(w http.ResponseWriter, r *http.Request) {
 	lastTokenData += "\n\nBody:\n" + string(body)
 	fmt.Fprintln(w, "\nOk")
 	fmt.Fprintln(w, body)
+	fmt.Println(lastTokenData)
 }
 
 func recordPostParamsHandler(w http.ResponseWriter, r *http.Request) {
